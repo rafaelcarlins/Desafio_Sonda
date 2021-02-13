@@ -1,0 +1,185 @@
+﻿
+<form id="formCadastro" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Nome">Nome:</label>
+                <input required="required" type="text" class="form-control" id="Nome" name="Nome" placeholder="Ex.: João" maxlength="50">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="CPF">CPF:</label>
+                <p><input required="required" type="text" onkeyup="cpfCheck(this)" onkeydown="javascript: fMasc( this, mCPF );" class="form-control" id="CPF" name="CPF" placeholder="Ex.: 010.011.111-00" maxlength="14"> <span id="cpfResponse"></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Nome">Data Nascimento:</label>
+                <input required="required" type="text" onkeypress="mascaraData(this)"  class="form-control" id="DtNasc" name="DtNasc" placeholder="01/01/1900" maxlength="10" >
+            </div>
+        </div>
+        
+    </div>
+    <div class="row">
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="pull-left">
+
+                <a class="btn btn-default" id="btnEndereco" data-toggle="modal" data-target=".bootstrapmodal"><span class="btn"></span> Endereço </a>
+                @Html.Partial("PopupEndereco")
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="pull-right">
+                <button type="submit" id="btnCadastrar" class="btn btn-sm btn-success">Salvar</button>
+                @Html.ActionLink("Voltar", "Index", "Cliente", new { }, new { @class = "btn btn-sm btn-danger" })
+            </div>
+        </div>
+    </div>
+    <script>
+
+        function is_cpf(c) {
+
+            if ((c = c.replace(/[^\d]/g, "")).length != 11)
+                return false
+
+            if (c == "00000000000")
+                return false;
+
+            var r;
+            var s = 0;
+
+            for (i = 1; i <= 9; i++)
+                s = s + parseInt(c[i - 1]) * (11 - i);
+
+            r = (s * 10) % 11;
+
+            if ((r == 10) || (r == 11))
+                r = 0;
+
+            if (r != parseInt(c[9]))
+                return false;
+
+            s = 0;
+
+            for (i = 1; i <= 10; i++)
+                s = s + parseInt(c[i - 1]) * (12 - i);
+
+            r = (s * 10) % 11;
+
+            if ((r == 10) || (r == 11))
+                r = 0;
+
+            if (r != parseInt(c[10]))
+                return false;
+            return true;
+        }
+
+
+        function fMasc(objeto, mascara) {
+            obj = objeto
+            masc = mascara
+            setTimeout("fMascEx()", 1)
+        }
+
+        function fMascEx() {
+            obj.value = masc(obj.value)
+        }
+
+        function mCPF(cpf) {
+            cpf = cpf.replace(/\D/g, "")
+            cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+            cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+            return cpf
+
+        }
+
+
+        function cpfCheck(el) {
+            document.getElementById('cpfResponse').innerHTML = is_cpf(el.value) ? document.getElementById("btnCadastrar").disabled = false : document.getElementById("btnCadastrar").disabled = true;
+            if (el.value == '') document.getElementById('cpfResponse').innerHTML = '';
+        }
+
+        function mascaraData(val) {
+            var pass = val.value;
+            var expr = /[0123456789]/;
+
+            for (i = 0; i < pass.length; i++) {
+                // charAt -> retorna o caractere posicionado no índice especificado
+                var lchar = val.value.charAt(i);
+                var nchar = val.value.charAt(i + 1);
+
+                if (i == 0) {
+                    // search -> retorna um valor inteiro, indicando a posição do inicio da primeira
+                    // ocorrência de expReg dentro de instStr. Se nenhuma ocorrencia for encontrada o método retornara -1
+                    // instStr.search(expReg);
+                    if ((lchar.search(expr) != 0) || (lchar > 3)) {
+                        val.value = "";
+                    }
+
+                } else if (i == 1) {
+
+                    if (lchar.search(expr) != 0) {
+                        // substring(indice1,indice2)
+                        // indice1, indice2 -> será usado para delimitar a string
+                        var tst1 = val.value.substring(0, (i));
+                        val.value = tst1;
+                        continue;
+                    }
+
+                    if ((nchar != '/') && (nchar != '')) {
+                        var tst1 = val.value.substring(0, (i) + 1);
+
+                        if (nchar.search(expr) != 0)
+                            var tst2 = val.value.substring(i + 2, pass.length);
+                        else
+                            var tst2 = val.value.substring(i + 1, pass.length);
+
+                        val.value = tst1 + '/' + tst2;
+                    }
+
+                } else if (i == 4) {
+
+                    if (lchar.search(expr) != 0) {
+                        var tst1 = val.value.substring(0, (i));
+                        val.value = tst1;
+                        continue;
+                    }
+
+                    if ((nchar != '/') && (nchar != '')) {
+                        var tst1 = val.value.substring(0, (i) + 1);
+
+                        if (nchar.search(expr) != 0)
+                            var tst2 = val.value.substring(i + 2, pass.length);
+                        else
+                            var tst2 = val.value.substring(i + 1, pass.length);
+
+                        val.value = tst1 + '/' + tst2;
+                    }
+                }
+
+                if (i >= 6) {
+                    if (lchar.search(expr) != 0) {
+                        var tst1 = val.value.substring(0, (i));
+                        val.value = tst1;
+                    }
+                }
+            }
+
+            if (pass.length > 10)
+                val.value = val.value.substring(0, 10);
+            return true;
+        }
+    </script>
+    
+</form>

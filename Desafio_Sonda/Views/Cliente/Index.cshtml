@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Desafio_Sonda.Models.ClienteModel>
+
+@{
+    ViewBag.Title = "Cliente";
+}
+
+<h2>Cliente</h2>
+
+<p>
+    
+    @Html.ActionLink("Novo Cliente", "Incluir", "Cliente", new { }, new { @class = "btn btn-sm btn-primary pull-right" })
+</p>
+
+<table id="mytable" class="table table-bordred table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Data Nascimento</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var gt in Model)
+        {
+            <tr>
+                <td>@gt.Nome</td>
+                <td>@gt.CPF</td>
+                <td>@gt.DtNasc</td>
+                @using (Ajax.BeginForm("getUserDetailById", new AjaxOptions() { UpdateTargetId = "Edit-User", AllowCache = true, InsertionMode = InsertionMode.ReplaceWith, LoadingElementId = "resultLoadingDiv" }))
+                {
+                    @Html.Hidden("userId", @gt.Id)
+
+                    <td><p data-placement="top" data-toggle="tooltip" title="Edit/View"><button class="btn btn-primary btn-xs" data-title="Edit/View" data-toggle="modal" data-target="#edit"><span class="glyphicon glyphicon-pencil"></span></button></p></td>
+                }
+                <td><button class="btn btn-danger btn-xs delete" data-userid="@gt.Id" data-title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Nome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CPF)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.DtNasc)
+        </th>
+        <th>
+            @Html.ActionLink("Alterar", "Alterar", "Cliente", new { }, new { @class = "btn btn-sm btn-primary pull-right" })
+        </th>
+        <th>
+            @Html.ActionLink("Excluir", "Excluir", "Cliente", new { }, new { @class = "btn btn-sm btn-primary pull-right" })
+        </th>
+    </tr>
+
+
+
+</table>

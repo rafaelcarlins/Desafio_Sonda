@@ -25,6 +25,19 @@ namespace Desafio_Sonda
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jtable").Include(
+          "~/Scripts/jtable/jquery.jtable.min.js",
+          "~/Scripts/jtable/localization/jquery.jtable.pt-BR.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/clientes").Include(
+                      "~/Scripts/Clientes/Clientes.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/listClientes").Include(
+          "~/Scripts/Clientes/ListClientes.js"));
+
+            bundles.Add(new StyleBundle("~/Content/jtable").Include(
+                      "~/Scripts/jtable/themes/metro/darkgray/jtable.css"));
         }
     }
 }

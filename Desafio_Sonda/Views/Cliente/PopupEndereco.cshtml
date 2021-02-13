@@ -1,0 +1,221 @@
+﻿
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="pull-left">
+            <div class="modal fade bootstrapmodal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            Endereços
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="Nome">Logradouro:</label>
+                                        <input type="text" class="form-control" id="Logradouro" name="Logradouro" placeholder="Ex.: Alzira Berton Pauleto" maxlength="50">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="Sobrenome">Bairro:</label>
+                                        <input type="text" class="form-control" id="Bairro" name="Bairro" placeholder="Ex.: Jardim Del Rey" maxlength="40">
+                                    </div>
+                                </div>
+                                
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="Nome">Cidade:</label>
+                                        <input type="text" class="form-control" id="Cidade" name="Cidade" placeholder="Ex.: São josé dos Pinhais" maxlength="40">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="Sobrenome">Estado:</label>
+                                        <input type="text" class="form-control" id="Estado" name="Estado" placeholder="Ex.: Paraná" maxlength="40">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label></label>
+                                        <a href="#" class="btn btn-success" id="CadEndereco" onclick="AdicionarGridEndereco()"> incluir</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <table id="gridEndereco" class="table">
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" id="btnFecharModal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function AdicionarGridEndereco() {
+        var d = document;
+        var newRow = d.createElement('tr');
+
+        var Logradouro = d.getElementById('Logradouro').value;
+        var Bairro = d.getElementById('Bairro').value;
+        var Cidade = d.getElementById('Cidade').value;
+        var Estado = d.getElementById('Estado').value;
+
+        newRow.insertCell(0).innerHTML = Logradouro;
+        newRow.insertCell(1).innerHTML = Bairro;
+        newRow.insertCell(2).innerHTML = Cidade;
+        newRow.insertCell(2).innerHTML = Estado;
+
+        var newBtnAlterar = d.createElement('Button');
+        newBtnAlterar.setAttribute("class", "btn btn-link");
+        newBtnAlterar.onclick = function (e) {
+            e = e || window.event;
+            var target = e.target || e.srcElement;
+            if (target.innerHTML == "Alterar") {
+                AlterarEndereco(target.parentNode.rowIndex);
+                e.preventDefault();
+            }
+            else {
+                e.preventDefault();
+            }
+        };
+        var newBtnDeletar = d.createElement('Button');
+        newBtnDeletar.setAttribute("class", "btn btn-danger delete");
+        newBtnDeletar.onclick = function (e) {
+            e = e || window.event;
+            var target = e.target || e.srcElement;
+            if (target.innerHTML == "Deletar") {
+                if (confirm('Deseja realmente excluir?')) {
+                    ExcluirEndereco(target.parentNode.rowIndex);
+                    e.preventDefault();
+                }
+                else {
+                    e.preventDefault();
+                }
+            }
+        };
+
+        newBtnAlterar.innerHTML = "Alterar";
+        newBtnDeletar.innerHTML = "Deletar";
+
+        newRow.appendChild(newBtnAlterar);
+        newRow.appendChild(newBtnDeletar);
+        d.getElementById('gridEndereco').appendChild(newRow);
+
+        var List;
+        var table = document.getElementById('gridEndereco');
+
+        var listOfObjects = [];
+
+        if (table.rows.length > 0) {
+            contLinhas = table.rows.length;
+            for (var i = 0; i < contLinhas; i++) {
+                Logradouro = document.getElementById('gridEndereco').rows[i].cells[0].innerText;
+                Bairro = document.getElementById('gridEndereco').rows[i].cells[1].innerText;
+                Cidade = document.getElementById('gridEndereco').rows[i].cells[2].innerText;
+                Estado = document.getElementById('gridEndereco').rows[i].cells[3].innerText;
+                List = { "Logradouro": Logradouro, "Bairro": Bairro, "Cidade": Cidade, "Estado": Estado, "IdCliente": urlPost.replace(/^\D+/g, '') };
+                listOfObjects.push(List);
+            }
+
+        }
+
+        salvarLista(listOfObjects);
+    }
+
+    function recuperarLista() {
+
+        return data = JSON.parse(localStorage.getItem('ListaEnderecos'))
+    }
+    function ExcluirEndereco(index) {
+        var d = document;
+        var table = d.getElementById('gridEndereco');
+        if (table.rows.length > 0) {
+            d.getElementById('gridEndereco').deleteRow(index);
+        }
+
+
+        var List;
+        var table = document.getElementById('gridEndereco');
+
+        var listOfObjects = [];
+
+        if (table.rows.length > 0) {
+            contLinhas = table.rows.length;
+            for (var i = 1; i < contLinhas; i++) {
+                Logradouro = d.getElementById('gridEndereco').rows[i].cells[0].innerText;
+                Bairro = d.getElementById('gridEndereco').rows[i].cells[1].innerText;
+                Cidade = d.getElementById('gridEndereco').rows[i].cells[2].innerText;
+                Estado = d.getElementById('gridEndereco').rows[i].cells[2].innerText;
+                List = { "Logradouro": Logradouro, "Bairro": Bairro, "Cidade": Cidade, "Estado": Estado, "IdCliente": urlPost.replace(/^\D+/g, '') };
+                listOfObjects.push(List);
+            }
+
+        }
+
+        salvarLista(listOfObjects);
+    }
+
+    function AlterarEndereco(index) {
+
+        var d = document;
+
+        var table = d.getElementById('gridEndereco');
+        if (table.rows.length > 0) {
+            var Logradouro = d.getElementById('gridEndereco').rows[index].cells[0].innerHTML;
+            var Bairro = d.getElementById('gridEndereco').rows[index].cells[1].innerHTML;
+            var Cidade = d.getElementById('gridEndereco').rows[index].cells[2].innerHTML;
+            var Estado = d.getElementById('gridEndereco').rows[index].cells[3].innerHTML;
+            d.getElementById('gridEndereco').deleteRow(index);
+        }
+
+        d.getElementById('Logradouro').value = Logradouro;
+        d.getElementById('Bairro').value = Bairro;
+        d.getElementById('Cidade').value = Cidade;
+        d.getElementById('Estado').value = Estado;
+
+
+    }
+
+
+    function salvarLista(Lista) {
+        try {
+            if (Lista.length > 0) {
+                for (var i = 0; i < Lista.length; i++) {
+                    //localStorage.clear();
+                    localStorage.setItem('ListaEnderecos', JSON.stringify(Lista))
+                }
+            }
+            else {
+                localStorage.clear();
+            }
+
+        } catch (e) {
+
+        }
+    }
+</script>
+
