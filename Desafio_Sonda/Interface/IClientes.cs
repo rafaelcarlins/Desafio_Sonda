@@ -9,8 +9,10 @@ namespace Desafio_Sonda.Interface
 {
     public interface IClientes
     {
-        long Incluir(Cliente cliente);
+        int Incluir(Cliente cliente);
         void Alterar(Cliente cliente);
-        List<Cliente> Pesquisa();
+        List<Cliente> PesquisaTodos();
+        Cliente Consultar(long id);
+        void Excluir(int ID);
     }
 }

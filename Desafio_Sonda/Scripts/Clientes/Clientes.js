@@ -30,150 +30,93 @@ $(document).ready(function () {
 
 })
 
+function MontarGridClientes(Lista) {
+
+    var d = document;
+
+    var newRow = d.createElement('tr');
+    var contLinhas;
+    var table = d.getElementById('gridClientes');
+    if (table.rows.length > 0) {
+        contLinhas = table.rows.length;
+        for (var i = 0; i < contLinhas; i++) {
+            d.getElementById('gridClientes').deleteRow(0);
+        }
+    }
+    newCol = d.createElement('tr');
+    newCol.insertCell(0).innerHTML = "Nome";
+    newCol.insertCell(1).innerHTML = "CPF";
+    newCol.insertCell(2).innerHTML = "Data Nascimento";
+
+
+    d.getElementById('gridClientes').appendChild(newCol);
+    for (var i = 0; i < Lista.Records.length; i++) {
+        var newBtnAlterar = d.createElement('Button');
+        newBtnAlterar.setAttribute("class", "btn btn-link");
+        newBtnAlterar.onclick = function (e) {
+            e = e || window.event;
+            var target = e.target || e.srcElement;
+            if (target.innerHTML == "Alterar") {
+                AlterarCliente(target.parentNode.rowIndex);
+                e.preventDefault();
+            }
+            else {
+                e.preventDefault();
+            }
+        };
+        var newBtnDeletar = d.createElement('Button');
+        newBtnDeletar.setAttribute("class", "btn btn-danger delete");
+        newBtnDeletar.onclick = function (e) {
+            e = e || window.event;
+            var target = e.target || e.srcElement;
+            if (target.innerHTML == "Deletar") {
+                if (confirm('Deseja realmente excluir?')) {
+                    ExcluirCliente(target.parentNode.rowIndex);
+                    e.preventDefault();
+                }
+                else {
+                    e.preventDefault();
+                }
+            }
+        };
+        newRow.insertCell(0).innerHTML = Lista.Records[i].Nome;
+        newRow.insertCell(1).innerHTML = Lista.Records[i].CPF;
+        newRow.insertCell(2).innerHTML = Lista.Records[i].DtNasc;
+        newBtnAlterar.innerHTML = "Alterar";
+        newBtnDeletar.innerHTML = "Deletar";
+
+        newRow.appendChild(newBtnAlterar);
+        newRow.appendChild(newBtnDeletar);
+        d.getElementById('gridClientes').appendChild(newRow);
+        newRow = d.createElement('tr');
+        newCol = d.createElement('tr');
+        newBtnAlterar = d.createElement('Button');
+        newBtnDeletar = d.createElement('Button');
+        newBtnAlterar.setAttribute("class", "btn btn-link");
+        newBtnDeletar.setAttribute("class", "btn btn-danger delete");
+    }
+
+    salvarLista(Lista.Records);
+
+}
+
+function salvarLista(Lista) {
+    try {
+        if (Lista.length > 0) {
+            for (var i = 0; i < Lista.length; i++) {
+                localStorage.setItem('ListaBeneficiario', JSON.stringify(Lista))
+            }
+        }
+        else {
+            localStorage.clear();
+        }
+
+    } catch (e) {
+
+    }
+}
+
 function recuperarLista() {
 
     return data = JSON.parse(localStorage.getItem('ListaEnderecos'))
-}
-
-//function ModalDialog(titulo, texto) {
-//    var random = Math.random().toString().replace('.', '');
-//    var texto = '<div id="' + random + '" class="modal fade">                                                               ' +
-//        '        <div class="modal-dialog">                                                                                 ' +
-//        '            <div class="modal-content">                                                                            ' +
-//        '                <div class="modal-header">                                                                         ' +
-//        '                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>         ' +
-//        '                    <h4 class="modal-title">' + titulo + '</h4>                                                    ' +
-//        '                </div>                                                                                             ' +
-//        '                <div class="modal-body">                                                                           ' +
-//        '                    <p>' + texto + '</p>                                                                           ' +
-//        '                </div>                                                                                             ' +
-//        '                <div class="modal-footer">                                                                         ' +
-//        '                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>             ' +
-//        '                                                                                                                   ' +
-//        '                </div>                                                                                             ' +
-//        '            </div><!-- /.modal-content -->                                                                         ' +
-//        '  </div><!-- /.modal-dialog -->                                                                                    ' +
-//        '</div> <!-- /.modal -->                                                                                        ';
-
-//    $('body').append(texto);
-//    $('#' + random).modal('show');
-
-
-//}
-
-//function CadastrarBeneficiario() {
-
-//    var CPFBenef = document.getElementById("CPFBeneficiario").value;
-//    var NomeBenef = document.getElementById("NomeBeneficiario").value;
-//    var Id = urlPost.replace(/^\D+/g, '');
-//    var obj = {};
-
-
-
-//    obj["CPFBeneficiario"] = CPFBenef;
-//    obj["NomeBeneficiario"] = NomeBenef;
-//    obj["IdCliente"] = Id;
-
-//    $.ajax({
-
-//        type: "POST",
-//        url: "../IncluirBeneficiario",
-//        data: JSON.stringify(obj),
-//        contentType: "application/json; charset=utf-8",
-//        dataType: "json",
-//        error:
-//            function (r) {
-//                if (r.status == 400)
-//                    ModalDialog("Ocorreu um erro", r.responseJSON);
-//                else if (r.status == 500)
-//                    ModalDialog("Ocorreu um erro", "Ocorreu um erro interno no servidor.");
-//            },
-//        success:
-//            function (r) {
-//                ModalDialog("Beneficiário cadastrado com sucesso!", r)
-//                MontarGridBeneficiario(r.Records.Data);
-
-
-//            }
-
-//    })
-
-//function is_cpf(c) {
-
-//    if ((c = c.replace(/[^\d]/g, "")).length != 11)
-//        return false
-
-//    if (c == "00000000000")
-//        return false;
-
-//    var r;
-//    var s = 0;
-
-//    for (i = 1; i <= 9; i++)
-//        s = s + parseInt(c[i - 1]) * (11 - i);
-
-//    r = (s * 10) % 11;
-
-//    if ((r == 10) || (r == 11))
-//        r = 0;
-
-//    if (r != parseInt(c[9]))
-//        return false;
-
-//    s = 0;
-
-//    for (i = 1; i <= 10; i++)
-//        s = s + parseInt(c[i - 1]) * (12 - i);
-
-//    r = (s * 10) % 11;
-
-//    if ((r == 10) || (r == 11))
-//        r = 0;
-
-//    if (r != parseInt(c[10]))
-//        return false;
-//    return true;
-//}
-
-
-//function fMasc(objeto, mascara) {
-//    obj = objeto
-//    masc = mascara
-//    setTimeout("fMascEx()", 1)
-//}
-
-//function fMascEx() {
-//    obj.value = masc(obj.value)
-//}
-
-//function mCPF(cpf) {
-//    cpf = cpf.replace(/\D/g, "")
-//    cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
-//    cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
-//    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2")
-//    return cpf
-
-//}
-
-
-//function cpfCheck(el) {
-//        document.getElementById('cpfResponse').innerHTML = is_cpf(el.value) ? document.getElementById("btnCadastrar").disabled = false : document.getElementById("btnCadastrar").disabled = true;
-//        if (el.value == '') document.getElementById('cpfResponse').innerHTML = '';
-//}
-
-
-
-//function CPFIncluido(CPF) {
-//    var table = document.getElementById('gridBeneficiarios');
-//    if (table.rows.length > 0) {
-//        contLinhas = table.rows.length;
-//        for (var i = 1; i < contLinhas; i++) {
-//            var CPFTabela = document.getElementById('gridBeneficiarios').rows[i].cells[0].innerText;
-//            if (CPFTabela == CPF) {
-//                return false;
-//            }
-//        }
-
-//    }
-//    return true;
 }

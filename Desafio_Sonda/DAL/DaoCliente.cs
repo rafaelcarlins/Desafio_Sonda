@@ -11,7 +11,7 @@ namespace Desafio_Sonda.DAL
 {
     public class DaoCliente : IClientes 
     {
-        public long Incluir(DML.Cliente cliente)
+        public int Incluir(DML.Cliente cliente)
         {
             List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
 
@@ -20,18 +20,42 @@ namespace Desafio_Sonda.DAL
             parametros.Add(new System.Data.SqlClient.SqlParameter("DATA_NASC", cliente.Data_Nasc));
 
             DataSet ds = Consultar("SP_IncCliente", parametros);
-            long ret = 0;
+            int ret = 0;
 
             if (ds.Tables[0].Rows.Count > 0)
-                long.TryParse(ds.Tables[0].Rows[0][0].ToString(), out ret);
+                int.TryParse(ds.Tables[0].Rows[0][0].ToString(), out ret);
             return ret;
         }
 
-        public List<DML.Cliente> Pesquisa() 
+        public List<DML.Cliente> PesquisaTodos() 
         {
-            List<DML.Cliente> cliente = new List<DML.Cliente>();
+            
+            List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
+            DataSet ds = Consultar("SP_ConsultarTodosClientes", parametros);
+            List<DML.Cliente> cli = Converter(ds);
 
-            return cliente;
+            return cli;
+
+        }
+        public void Excluir(int ID) 
+        {
+            List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
+
+            parametros.Add(new System.Data.SqlClient.SqlParameter("Id", ID));
+
+            Executar("SP_DelCliente", parametros);
+        }
+
+        public DML.Cliente Consultar(long Id)
+        {
+            List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
+
+            parametros.Add(new System.Data.SqlClient.SqlParameter("Id", Id));
+
+            DataSet ds = Consultar("SP_ConsCliente", parametros);
+            List<DML.Cliente> cli = Converter(ds);
+
+            return cli.FirstOrDefault();
         }
 
         public void Alterar(DML.Cliente cliente)
@@ -45,6 +69,25 @@ namespace Desafio_Sonda.DAL
             parametros.Add(new System.Data.SqlClient.SqlParameter("ID", cliente.id));
 
             Executar("SP_AltCliente", parametros);
+        }
+
+        private List<DML.Cliente> Converter(DataSet ds)
+        {
+            List<DML.Cliente> lista = new List<DML.Cliente>();
+            if (ds != null && ds.Tables != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    DML.Cliente cli = new DML.Cliente();
+                    cli.id = row.Field<int>("ID");
+                    cli.Nome = row.Field<string>("NOME");
+                    cli.CPF = row.Field<string>("CPF");
+                    cli.Data_Nasc = row.Field<string>("Data_Nasc");
+                    lista.Add(cli);
+                }
+            }
+
+            return lista;
         }
 
         private string stringDeConexao

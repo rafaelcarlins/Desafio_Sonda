@@ -20,22 +20,24 @@ namespace Desafio_Sonda.Controllers
             _cliente = cliente;
             _endereco = endereco;
         }
-        public JsonResult Index()
+        public ActionResult Index()
         {
-            try
-            {
-                int qtd = 0;
-                
+            List<Cliente> clientes = new List<Cliente>();
+            ClienteModel clienteModels = new ClienteModel();
+            List<ClienteModel> ListClienteModels = new List<ClienteModel>();
 
-                List<Cliente> clientes = _cliente.Pesquisa();
-
-                //Return result to jTable
-                return Json(new { Result = "OK", Records = clientes, TotalRecordCount = qtd });
-            }
-            catch (Exception ex)
+            clientes = _cliente.PesquisaTodos();
+            for (int i = 0; i < clientes.Count; i++)
             {
-                return Json(new { Result = "ERROR", Message = ex.Message });
+                clienteModels.Id = clientes[i].id;
+                clienteModels.Nome = clientes[i].Nome;
+                clienteModels.CPF = clientes[i].CPF;
+                clienteModels.DtNasc = clientes[i].Data_Nasc;
+                ListClienteModels.Add(clienteModels);
+                clienteModels = new ClienteModel();
             }
+            return View(ListClienteModels);
+
         }
 
         public ActionResult Incluir()
@@ -96,10 +98,28 @@ namespace Desafio_Sonda.Controllers
 
         }
 
-        [HttpPost]
-        public JsonResult Alterar(ClienteModel model)
+        public ActionResult Alterar(long id)
         {
+            
+            Cliente cliente = _cliente.Consultar(id);
+            Models.ClienteModel model = null;
 
+            if (cliente != null)
+            {
+                model = new ClienteModel()
+                {
+                    Id = cliente.id,
+                    Nome = cliente.Nome,
+                    CPF = cliente.CPF,
+                    DtNasc = cliente.Data_Nasc
+                };
+            }
+
+            return View(model);
+        }
+
+        public ActionResult AlterarCliente(ClienteModel model)
+        {
             if (!this.ModelState.IsValid)
             {
                 List<string> erros = (from item in ModelState.Values
@@ -119,13 +139,15 @@ namespace Desafio_Sonda.Controllers
                     Data_Nasc = model.DtNasc
                 });
 
-                if (model.ListaEnderecos != null)
-                {
-                    IncluirEndereco(model.ListaEnderecos, model.Id);
-                }
-
-                return Json("Cadastro alterado com sucesso");
+                
+                return View(model);
             }
+        }
+
+        public ActionResult Excluir(int ID)
+        {
+            _cliente.Excluir(ID);
+            return RedirectToAction("Index");
         }
     }
 }

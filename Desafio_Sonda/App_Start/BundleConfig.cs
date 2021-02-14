@@ -36,6 +36,9 @@ namespace Desafio_Sonda
             bundles.Add(new ScriptBundle("~/bundles/listClientes").Include(
           "~/Scripts/Clientes/ListClientes.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/altClientes").Include(
+          "~/Scripts/Clientes/FI.AltClientes.js"));
+
             bundles.Add(new StyleBundle("~/Content/jtable").Include(
                       "~/Scripts/jtable/themes/metro/darkgray/jtable.css"));
         }

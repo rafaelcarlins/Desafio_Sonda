@@ -9,7 +9,7 @@ namespace Desafio_Sonda.Models
 {
     public class ClienteModel
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         [Required]
         [MaxLength(30)]
         public string Nome { get; set; }
